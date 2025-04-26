@@ -31,6 +31,32 @@ func GetAllUsers() ([]entities.User, error) {
 	}
 	return users, result.Error
 }
+func GetOneUser(id int) (*entities.User, error) {
+	var user entities.User
+	db := config.GetDB()
+	result := db.First(&user, id)
+	if result.Error != nil {
+		log.Println("Erro ao buscar usuário:", result.Error)
+		return nil, result.Error
+	}
+	return &user, nil
+}
+func DeleteUser(id int) error {
+	db := config.GetDB()
+	var user entities.User
+	result := db.First(&user, id)
+	if result.Error != nil {
+		log.Println("Erro ao buscar usuário:", result.Error)
+		return result.Error
+	}
+	db.Delete(&user)
+	if result.Error != nil {
+		log.Println("Erro ao deletar usuário:", result.Error)
+		return result.Error
+	}
+	log.Println("Usuário deletado com sucesso")
+	return nil
+}
 
 // Cria o usuário no banco de dados
 func CreateUser(firstName, lastName, email string) (*entities.User, error) {
